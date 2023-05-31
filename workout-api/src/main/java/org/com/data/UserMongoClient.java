@@ -1,7 +1,7 @@
 package org.com.data;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mongodb.ConnectionString;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
@@ -9,14 +9,18 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.com.dto.AddUserInMongoDto;
+import org.com.dto.user_dto.AddUserInMongoDto;
+import org.com.dto.user_dto.UpdateUserDto;
 import org.com.model.User;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -41,7 +45,7 @@ public class UserMongoClient {
         );
     }
 
-    public List<User> getAllUsers() throws JsonProcessingException {
+    public List<User> getAllUsers() throws IOException {
         FindIterable<Document> documentsIterable = this.mongoClient.getDatabase("workout").getCollection("user").find();
         List<User> documents = new ArrayList<>();
         for (Document document : documentsIterable) {
@@ -50,7 +54,7 @@ public class UserMongoClient {
         return documents;
     }
 
-    public User getUserById(ObjectId _id) throws JsonProcessingException {
+    public User getUserById(ObjectId _id) throws IOException {
         MongoCollection<Document> collection = this.mongoClient.getDatabase("workout").getCollection("user");
         Document document = collection.find(eq("_id", _id)).first();
         if (document == null) {
@@ -58,5 +62,15 @@ public class UserMongoClient {
         } else {
             return new ObjectMapper().readValue(document.toJson(), User.class);
         }
+    }
+
+    public User updateUser(UpdateUserDto user, ObjectId _id) throws IOException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        Document updatedDocument = this.mongoClient.getDatabase("workout").getCollection("user").findOneAndReplace(
+            eq("_id", _id),
+            Document.parse(ow.writeValueAsString(user))
+        );
+        assert updatedDocument != null;
+        return new ObjectMapper().readValue(updatedDocument.toJson(), User.class);
     }
 }

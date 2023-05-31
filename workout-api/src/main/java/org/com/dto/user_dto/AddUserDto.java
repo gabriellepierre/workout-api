@@ -1,4 +1,4 @@
-package org.com.dto;
+package org.com.dto.user_dto;
 
 public class AddUserDto {
     private String pseudo;

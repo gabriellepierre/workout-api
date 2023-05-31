@@ -1,5 +1,4 @@
-package org.com.model;
-
+package org.com.dto.user_dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.bson.types.ObjectId;
@@ -7,17 +6,14 @@ import org.com.serializer.ObjectIdDeserializer;
 
 import java.util.List;
 
-public class User {
-    @JsonDeserialize(using = ObjectIdDeserializer.class)
-    private ObjectId _id;
+public class UpdateUserDto {
     private String pseudo;
     private String password;
     private String email;
     private List<String> objectives;
     private List<String> programmes;
 
-    public User(ObjectId _id, String pseudo, String password, String email, List<String> objectives, List<String> programmes) {
-        this._id = _id;
+    public UpdateUserDto(String pseudo, String password, String email, List<String> objectives, List<String> programmes) {
         this.pseudo = pseudo;
         this.password = password;
         this.email = email;
@@ -25,15 +21,7 @@ public class User {
         this.programmes = programmes;
     }
 
-    public User() {
-    }
-
-    public ObjectId get_id() {
-        return _id;
-    }
-
-    public void set_id(ObjectId _id) {
-        this._id = _id;
+    public UpdateUserDto() {
     }
 
     public String getPseudo() {

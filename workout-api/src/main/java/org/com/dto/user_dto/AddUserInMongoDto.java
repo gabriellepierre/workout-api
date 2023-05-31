@@ -1,6 +1,4 @@
-package org.com.dto;
-
-import org.bson.types.ObjectId;
+package org.com.dto.user_dto;
 
 import java.util.List;
 
