@@ -4,7 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.bson.types.ObjectId;
-import org.com.data.UserMongoClient;
+import org.com.mongo.UserMongoClient;
 import org.com.dto.user_dto.AddUserDto;
 import org.com.dto.user_dto.AddUserInMongoDto;
 import org.com.dto.user_dto.UpdateUserDto;
@@ -31,7 +31,6 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     public User getUserById(@PathParam("id") String id) throws IOException {
-        System.out.println(id);
         return userMongoClient.getUserById(new ObjectId(id));
     }
 
@@ -56,7 +55,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{_id}")
-    public User updateUser(UpdateUserDto user, @PathParam("_id") String _id) throws IOException, JSONException {
+    public User updateUser(UpdateUserDto user, @PathParam("_id") String _id) throws IOException {
         return userMongoClient.updateUser(
             user,
             new ObjectId(_id)

@@ -1,4 +1,4 @@
-package org.com.data;
+package org.com.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -9,14 +9,11 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.com.dto.user_dto.AddUserInMongoDto;
 import org.com.dto.user_dto.UpdateUserDto;
 import org.com.model.User;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,11 +63,10 @@ public class UserMongoClient {
 
     public User updateUser(UpdateUserDto user, ObjectId _id) throws IOException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        Document updatedDocument = this.mongoClient.getDatabase("workout").getCollection("user").findOneAndReplace(
+        this.mongoClient.getDatabase("workout").getCollection("user").findOneAndReplace(
             eq("_id", _id),
             Document.parse(ow.writeValueAsString(user))
         );
-        assert updatedDocument != null;
-        return new ObjectMapper().readValue(updatedDocument.toJson(), User.class);
+        return this.getUserById(_id);
     }
 }
