@@ -4,15 +4,11 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.bson.types.ObjectId;
+import org.com.dto.user_dto.*;
 import org.com.mongo.UserMongoClient;
-import org.com.dto.user_dto.AddUserDto;
-import org.com.dto.user_dto.AddUserInMongoDto;
-import org.com.dto.user_dto.UpdateUserDto;
 import org.com.model.User;
-import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/users")
@@ -39,12 +35,10 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     public User addUser(AddUserDto addUserDto) throws IOException {
         ObjectId newUserId = userMongoClient.saveUser(
-            new AddUserInMongoDto(
+            new AddUserDto(
                 addUserDto.getPseudo(),
                 addUserDto.getPassword(),
-                addUserDto.getEmail(),
-                new ArrayList<>(),
-                new ArrayList<>()
+                addUserDto.getEmail()
             )
         ).getInsertedId().asObjectId().getValue();
 
@@ -56,9 +50,26 @@ public class UserController {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{_id}")
     public User updateUser(UpdateUserDto user, @PathParam("_id") String _id) throws IOException {
-        return userMongoClient.updateUser(
-            user,
-            new ObjectId(_id)
-        );
+        if(user.getProgram() == null) {
+            return userMongoClient.updateUser(
+                new UpdateUserBaseDto(
+                    user.getPseudo(),
+                    user.getPassword(),
+                    user.getEmail()
+                ),
+                null,
+                new ObjectId(_id)
+            );
+        } else {
+            return userMongoClient.updateUser(
+                new UpdateUserBaseDto(
+                    user.getPseudo(),
+                    user.getPassword(),
+                    user.getEmail()
+                ),
+                new ObjectId(user.getProgram()),
+                new ObjectId(_id)
+            );
+        }
     }
 }

@@ -22,27 +22,31 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.eq;
 
 @ApplicationScoped
-public class WorkoutMongoClient {
-    private MongoClient mongoClient;
-
+public class WorkoutMongoClient extends BaseMongoClient {
     public WorkoutMongoClient() {
-        ConnectionString connectionString = new ConnectionString("mongodb://root:root@localhost:27017/workout?authSource=admin");
-        this.mongoClient = MongoClients.create(connectionString);
+        super();
+        this.entityCollection = this.mongoClient.getDatabase("workout").getCollection("workout");
     }
 
-    public InsertOneResult saveWorkout(UpsertWorkoutInMongoDto w) {
-        return this.mongoClient.getDatabase("workout").getCollection("workout").insertOne(
-            new Document()
-                .append("author", w.getAuthor())
-                .append("name", w.getName())
-                .append("type", w.getType())
-                .append("dayOfWeek", w.getDayOfWeek())
-                .append("exercices", w.getExercices())
-        );
+    public InsertOneResult saveWorkout(UpsertWorkoutInMongoDto w, ObjectId authorId) {
+        if (authorId == null ) {
+            return entityCollection.insertOne(
+                new Document()
+                    .append("name", w.getName())
+                    .append("exercices", w.getExercices())
+            );
+        } else {
+            return entityCollection.insertOne(
+                new Document()
+                    .append("author", authorId)
+                    .append("name", w.getName())
+                    .append("exercices", w.getExercices())
+            );
+        }
     }
 
     public List<Workout> getAllWorkouts() throws IOException {
-        FindIterable<Document> documentsIterable = this.mongoClient.getDatabase("workout").getCollection("workout").find();
+        FindIterable<Document> documentsIterable = entityCollection.find();
         List<Workout> documents = new ArrayList<>();
         for (Document document : documentsIterable) {
             documents.add(new ObjectMapper().readValue(document.toJson(), Workout.class));
@@ -51,8 +55,7 @@ public class WorkoutMongoClient {
     }
 
     public Workout getWorkoutById(ObjectId _id) throws IOException {
-        MongoCollection<Document> collection = this.mongoClient.getDatabase("workout").getCollection("workout");
-        Document document = collection.find(eq("_id", _id)).first();
+        Document document = entityCollection.find(eq("_id", _id)).first();
         if (document == null) {
             throw new IllegalArgumentException("No workout with _id "+_id+" exists.");
         } else {
@@ -60,12 +63,19 @@ public class WorkoutMongoClient {
         }
     }
 
-    public Workout updateWorkout(UpsertWorkoutInMongoDto workout, ObjectId _id) throws IOException {
+    public Workout updateWorkout(UpsertWorkoutInMongoDto workout, ObjectId authorId, ObjectId _id) throws IOException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        this.mongoClient.getDatabase("workout").getCollection("workout").findOneAndReplace(
-            eq("_id", _id),
-            Document.parse(ow.writeValueAsString(workout))
-        );
+        if (authorId == null) {
+            entityCollection.findOneAndReplace(
+                eq("_id", _id),
+                Document.parse(ow.writeValueAsString(workout))
+            );
+        } else {
+            entityCollection.findOneAndReplace(
+                eq("_id", _id),
+                Document.parse(ow.writeValueAsString(workout)).append("author", authorId)
+            );
+        }
         return this.getWorkoutById(_id);
     }
 }

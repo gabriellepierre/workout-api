@@ -33,24 +33,41 @@ public class WorkoutController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Workout addWorkout(AddWorkoutDto addWorkoutDto) throws IOException {
-        ObjectId newWorkoutId = workoutMongoClient.saveWorkout(
-            new UpsertWorkoutInMongoDto(
-                new ObjectId(addWorkoutDto.getAuthor()),
-                addWorkoutDto.getName(),
-                addWorkoutDto.getType(),
-                addWorkoutDto.getDayOfWeek(),
-                addWorkoutDto.getExercices().stream().map( exercice ->
-                    new UpsertExerciceInMongoDto(
-                        new ObjectId(),
-                        exercice.getName(),
-                        exercice.getMusclesEngaged(),
-                        exercice.getSets()
-                    )
-                ).toList()
-            )
-        ).getInsertedId().asObjectId().getValue();
+        if (addWorkoutDto.getAuthor() == null) {
+            ObjectId newWorkoutId = workoutMongoClient.saveWorkout(
+                new UpsertWorkoutInMongoDto(
+                    addWorkoutDto.getName(),
+                    addWorkoutDto.getExercices().stream().map(exercice ->
+                        new UpsertExerciceInMongoDto(
+                            new ObjectId(),
+                            exercice.getName(),
+                            exercice.getMusclesEngaged(),
+                            exercice.getSets()
+                        )
+                    ).toList()
+                ),
+                null
+            ).getInsertedId().asObjectId().getValue();
 
-        return workoutMongoClient.getWorkoutById(newWorkoutId);
+            return workoutMongoClient.getWorkoutById(newWorkoutId);
+        } else {
+            ObjectId newWorkoutId = workoutMongoClient.saveWorkout(
+                new UpsertWorkoutInMongoDto(
+                    addWorkoutDto.getName(),
+                    addWorkoutDto.getExercices().stream().map(exercice ->
+                        new UpsertExerciceInMongoDto(
+                            new ObjectId(),
+                            exercice.getName(),
+                            exercice.getMusclesEngaged(),
+                            exercice.getSets()
+                        )
+                    ).toList()
+                ),
+                new ObjectId(addWorkoutDto.getAuthor())
+            ).getInsertedId().asObjectId().getValue();
+
+            return workoutMongoClient.getWorkoutById(newWorkoutId);
+        }
     }
 
     @PUT
@@ -58,22 +75,38 @@ public class WorkoutController {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{_id}")
     public Workout updateWorkout(UpdateWorkoutDto updateWorkoutDto, @PathParam("_id") String _id) throws IOException {
-        return workoutMongoClient.updateWorkout(
-            new UpsertWorkoutInMongoDto(
+        if (updateWorkoutDto.getAuthor() == null) {
+            return workoutMongoClient.updateWorkout(
+                new UpsertWorkoutInMongoDto(
+                    updateWorkoutDto.getName(),
+                    updateWorkoutDto.getExercices().stream().map(exercice ->
+                        new UpsertExerciceInMongoDto(
+                            new ObjectId(),
+                            exercice.getName(),
+                            exercice.getMusclesEngaged(),
+                            exercice.getSets()
+                        )
+                    ).toList()
+                ),
+                null,
+                new ObjectId(_id)
+            );
+        } else {
+            return workoutMongoClient.updateWorkout(
+                new UpsertWorkoutInMongoDto(
+                    updateWorkoutDto.getName(),
+                    updateWorkoutDto.getExercices().stream().map(exercice ->
+                        new UpsertExerciceInMongoDto(
+                            new ObjectId(),
+                            exercice.getName(),
+                            exercice.getMusclesEngaged(),
+                            exercice.getSets()
+                        )
+                    ).toList()
+                ),
                 new ObjectId(updateWorkoutDto.getAuthor()),
-                updateWorkoutDto.getName(),
-                updateWorkoutDto.getType(),
-                updateWorkoutDto.getDayOfWeek(),
-                updateWorkoutDto.getExercices().stream().map( exercice ->
-                    new UpsertExerciceInMongoDto(
-                        new ObjectId(),
-                        exercice.getName(),
-                        exercice.getMusclesEngaged(),
-                        exercice.getSets()
-                    )
-                ).toList()
-            ),
-            new ObjectId(_id)
-        );
+                new ObjectId(_id)
+            );
+        }
     }
 }

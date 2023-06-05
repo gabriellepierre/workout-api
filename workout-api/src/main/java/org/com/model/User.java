@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.bson.types.ObjectId;
 import org.com.serializer.ObjectIdDeserializer;
 
-import java.util.List;
 
 public class User {
     @JsonSerialize(using = ToStringSerializer.class)
@@ -16,16 +15,16 @@ public class User {
     private String pseudo;
     private String password;
     private String email;
-    private List<String> objectives;
-    private List<String> programmes;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = ObjectIdDeserializer.class)
+    private ObjectId program;
 
-    public User(ObjectId _id, String pseudo, String password, String email, List<String> objectives, List<String> programmes) {
+    public User(ObjectId _id, String pseudo, String password, String email, ObjectId program) {
         this._id = _id;
         this.pseudo = pseudo;
         this.password = password;
         this.email = email;
-        this.objectives = objectives;
-        this.programmes = programmes;
+        this.program = program;
     }
 
     public User() {
@@ -63,19 +62,11 @@ public class User {
         this.password = password;
     }
 
-    public List<String> getObjectives() {
-        return objectives;
+    public ObjectId getProgram() {
+        return program;
     }
 
-    public void setObjectives(List<String> objectives) {
-        this.objectives = objectives;
-    }
-
-    public List<String> getProgrammes() {
-        return programmes;
-    }
-
-    public void setProgrammes(List<String> programmes) {
-        this.programmes = programmes;
+    public void setProgram(ObjectId program) {
+        this.program = program;
     }
 }

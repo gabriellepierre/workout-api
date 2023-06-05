@@ -16,9 +16,17 @@ public class Workout {
     @JsonDeserialize(using = ObjectIdDeserializer.class)
     private ObjectId author;
     private String name;
-    private String type;
-    private String dayOfWeek;
     private List<Exercice> exercices;
+
+    public Workout(ObjectId _id, ObjectId author, String name, List<Exercice> exercices) {
+        this._id = _id;
+        this.author = author;
+        this.name = name;
+        this.exercices = exercices;
+    }
+
+    public Workout() {
+    }
 
     public ObjectId get_id() {
         return _id;
@@ -42,22 +50,6 @@ public class Workout {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
     }
 
     public List<Exercice> getExercices() {
