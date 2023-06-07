@@ -38,8 +38,7 @@ public class WorkoutController {
                 new UpsertWorkoutInMongoDto(
                     addWorkoutDto.getName(),
                     addWorkoutDto.getExercices().stream().map(exercice ->
-                        new UpsertExerciceInMongoDto(
-                            new ObjectId(),
+                        new UpsertExerciceDto(
                             exercice.getName(),
                             exercice.getMusclesEngaged(),
                             exercice.getSets()
@@ -55,8 +54,7 @@ public class WorkoutController {
                 new UpsertWorkoutInMongoDto(
                     addWorkoutDto.getName(),
                     addWorkoutDto.getExercices().stream().map(exercice ->
-                        new UpsertExerciceInMongoDto(
-                            new ObjectId(),
+                        new UpsertExerciceDto(
                             exercice.getName(),
                             exercice.getMusclesEngaged(),
                             exercice.getSets()
@@ -80,8 +78,7 @@ public class WorkoutController {
                 new UpsertWorkoutInMongoDto(
                     updateWorkoutDto.getName(),
                     updateWorkoutDto.getExercices().stream().map(exercice ->
-                        new UpsertExerciceInMongoDto(
-                            new ObjectId(),
+                        new UpsertExerciceDto(
                             exercice.getName(),
                             exercice.getMusclesEngaged(),
                             exercice.getSets()
@@ -96,8 +93,7 @@ public class WorkoutController {
                 new UpsertWorkoutInMongoDto(
                     updateWorkoutDto.getName(),
                     updateWorkoutDto.getExercices().stream().map(exercice ->
-                        new UpsertExerciceInMongoDto(
-                            new ObjectId(),
+                        new UpsertExerciceDto(
                             exercice.getName(),
                             exercice.getMusclesEngaged(),
                             exercice.getSets()

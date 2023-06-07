@@ -4,9 +4,9 @@ import java.util.List;
 
 public class UpsertWorkoutInMongoDto {
     private String name;
-    private List<UpsertExerciceInMongoDto> exercices;
+    private List<UpsertExerciceDto> exercices;
 
-    public UpsertWorkoutInMongoDto( String name, List<UpsertExerciceInMongoDto> exercices) {
+    public UpsertWorkoutInMongoDto( String name, List<UpsertExerciceDto> exercices) {
         this.name = name;
         this.exercices = exercices;
     }
@@ -19,11 +19,11 @@ public class UpsertWorkoutInMongoDto {
         this.name = name;
     }
 
-    public List<UpsertExerciceInMongoDto> getExercices() {
+    public List<UpsertExerciceDto> getExercices() {
         return exercices;
     }
 
-    public void setExercices(List<UpsertExerciceInMongoDto> exercices) {
+    public void setExercices(List<UpsertExerciceDto> exercices) {
         this.exercices = exercices;
     }
 }
