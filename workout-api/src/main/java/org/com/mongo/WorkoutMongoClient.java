@@ -11,6 +11,7 @@ import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.com.dto.timestamp_dto.WorkoutTimestampDto;
 import org.com.dto.workout_dto.UpsertWorkoutInMongoDto;
 import org.com.dto.workout_dto.UpdateWorkoutDto;
 import org.com.model.Workout;
@@ -45,25 +46,39 @@ public class WorkoutMongoClient extends BaseMongoClient {
         }
     }
 
-    public List<Workout> getAllWorkouts() throws IOException {
+    public List<WorkoutTimestampDto> getAllWorkouts() throws IOException {
         FindIterable<Document> documentsIterable = entityCollection.find();
-        List<Workout> documents = new ArrayList<>();
+        List<WorkoutTimestampDto> documents = new ArrayList<>();
         for (Document document : documentsIterable) {
-            documents.add(new ObjectMapper().readValue(document.toJson(), Workout.class));
+            Workout dbWorkout = new ObjectMapper().readValue(document.toJson(), Workout.class);
+            documents.add(
+                new WorkoutTimestampDto(
+                    dbWorkout.get_id(),
+                    dbWorkout.getAuthor(),
+                    dbWorkout.getName(),
+                    dbWorkout.getExercices()
+                )
+            );
         }
         return documents;
     }
 
-    public Workout getWorkoutById(ObjectId _id) throws IOException {
+    public WorkoutTimestampDto getWorkoutById(ObjectId _id) throws IOException {
         Document document = entityCollection.find(eq("_id", _id)).first();
         if (document == null) {
             throw new IllegalArgumentException("No workout with _id "+_id+" exists.");
         } else {
-            return new ObjectMapper().readValue(document.toJson(), Workout.class);
+            Workout dbWorkout = new ObjectMapper().readValue(document.toJson(), Workout.class);
+            return new WorkoutTimestampDto(
+                dbWorkout.get_id(),
+                dbWorkout.getAuthor(),
+                dbWorkout.getName(),
+                dbWorkout.getExercices()
+            );
         }
     }
 
-    public Workout updateWorkout(UpsertWorkoutInMongoDto workout, ObjectId authorId, ObjectId _id) throws IOException {
+    public WorkoutTimestampDto updateWorkout(UpsertWorkoutInMongoDto workout, ObjectId authorId, ObjectId _id) throws IOException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         if (authorId == null) {
             entityCollection.findOneAndReplace(

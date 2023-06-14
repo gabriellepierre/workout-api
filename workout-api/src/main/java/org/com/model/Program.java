@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.bson.types.ObjectId;
+import org.com.serializer.ListObjectIdDeserializer;
+import org.com.serializer.ObjectIdConverter;
 import org.com.serializer.ObjectIdDeserializer;
 
 import java.util.List;
@@ -15,6 +17,8 @@ public class Program {
     private String name;
     private String objective;
     private String level;
+    @JsonSerialize(contentConverter = ObjectIdConverter.class)
+    @JsonDeserialize(using = ListObjectIdDeserializer.class)
     private List<ObjectId> seances;
 
     public Program(ObjectId _id, String name, String objective, String level, List<ObjectId> seances) {

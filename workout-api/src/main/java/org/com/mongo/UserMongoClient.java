@@ -11,6 +11,7 @@ import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.com.dto.timestamp_dto.UserTimestampDto;
 import org.com.dto.user_dto.AddUserDto;
 import org.com.dto.user_dto.UpdateUserBaseDto;
 import org.com.model.User;
@@ -38,25 +39,41 @@ public class UserMongoClient extends BaseMongoClient {
         );
     }
 
-    public List<User> getAllUsers() throws IOException {
+    public List<UserTimestampDto> getAllUsers() throws IOException {
         FindIterable<Document> documentsIterable = entityCollection.find();
-        List<User> documents = new ArrayList<>();
+        List<UserTimestampDto> documents = new ArrayList<>();
         for (Document document : documentsIterable) {
-            documents.add(new ObjectMapper().readValue(document.toJson(), User.class));
+            User dbUser = new ObjectMapper().readValue(document.toJson(), User.class);
+            documents.add(
+                new UserTimestampDto(
+                    dbUser.get_id(),
+                    dbUser.getPseudo(),
+                    dbUser.getPassword(),
+                    dbUser.getEmail(),
+                    dbUser.getProgram()
+                )
+            );
         }
         return documents;
     }
 
-    public User getUserById(ObjectId _id) throws IOException {
+    public UserTimestampDto getUserById(ObjectId _id) throws IOException {
         Document document = entityCollection.find(eq("_id", _id)).first();
         if (document == null) {
             throw new IllegalArgumentException("No user with _id "+_id+" exists.");
         } else {
-            return new ObjectMapper().readValue(document.toJson(), User.class);
+            User dbUser = new ObjectMapper().readValue(document.toJson(), User.class);
+            return new UserTimestampDto(
+                dbUser.get_id(),
+                dbUser.getPseudo(),
+                dbUser.getPassword(),
+                dbUser.getEmail(),
+                dbUser.getProgram()
+            );
         }
     }
 
-    public User updateUser(UpdateUserBaseDto user, ObjectId programId, ObjectId _id) throws IOException {
+    public UserTimestampDto updateUser(UpdateUserBaseDto user, ObjectId programId, ObjectId _id) throws IOException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         if (programId == null) {
             entityCollection.findOneAndReplace(

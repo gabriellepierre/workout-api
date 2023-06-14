@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.bson.types.ObjectId;
+import org.com.dto.timestamp_dto.WorkoutTimestampDto;
 import org.com.dto.workout_dto.*;
 import org.com.model.Workout;
 import org.com.mongo.WorkoutMongoClient;
@@ -18,21 +19,21 @@ public class WorkoutController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Workout> getAllWorkouts() throws IOException {
+    public List<WorkoutTimestampDto> getAllWorkouts() throws IOException {
         return workoutMongoClient.getAllWorkouts();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Workout getWorkoutById(@PathParam("id") String id) throws IOException {
+    public WorkoutTimestampDto getWorkoutById(@PathParam("id") String id) throws IOException {
         return workoutMongoClient.getWorkoutById(new ObjectId(id));
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Workout addWorkout(AddWorkoutDto addWorkoutDto) throws IOException {
+    public WorkoutTimestampDto addWorkout(AddWorkoutDto addWorkoutDto) throws IOException {
         if (addWorkoutDto.getAuthor() == null) {
             ObjectId newWorkoutId = workoutMongoClient.saveWorkout(
                 new UpsertWorkoutInMongoDto(
@@ -72,7 +73,7 @@ public class WorkoutController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{_id}")
-    public Workout updateWorkout(UpdateWorkoutDto updateWorkoutDto, @PathParam("_id") String _id) throws IOException {
+    public WorkoutTimestampDto updateWorkout(UpdateWorkoutDto updateWorkoutDto, @PathParam("_id") String _id) throws IOException {
         if (updateWorkoutDto.getAuthor() == null) {
             return workoutMongoClient.updateWorkout(
                 new UpsertWorkoutInMongoDto(

@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.bson.types.ObjectId;
+import org.com.dto.timestamp_dto.UserTimestampDto;
 import org.com.dto.user_dto.*;
 import org.com.mongo.UserMongoClient;
 import org.com.model.User;
@@ -19,21 +20,21 @@ public class UserController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAllUsers() throws IOException {
+    public List<UserTimestampDto> getAllUsers() throws IOException {
         return userMongoClient.getAllUsers();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public User getUserById(@PathParam("id") String id) throws IOException {
+    public UserTimestampDto getUserById(@PathParam("id") String id) throws IOException {
         return userMongoClient.getUserById(new ObjectId(id));
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User addUser(AddUserDto addUserDto) throws IOException {
+    public UserTimestampDto addUser(AddUserDto addUserDto) throws IOException {
         ObjectId newUserId = userMongoClient.saveUser(
             new AddUserDto(
                 addUserDto.getPseudo(),
@@ -49,7 +50,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{_id}")
-    public User updateUser(UpdateUserDto user, @PathParam("_id") String _id) throws IOException {
+    public UserTimestampDto updateUser(UpdateUserDto user, @PathParam("_id") String _id) throws IOException {
         if(user.getProgram() == null) {
             return userMongoClient.updateUser(
                 new UpdateUserBaseDto(
