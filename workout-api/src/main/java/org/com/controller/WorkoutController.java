@@ -25,6 +25,7 @@ public class WorkoutController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{research}")
     public List<WorkoutTimestampDto> researchWorkouts(@QueryParam("field") String field, @QueryParam("value") String value) throws IOException {
         return workoutMongoClient.getWorkoutsBy(field, value);
     }
