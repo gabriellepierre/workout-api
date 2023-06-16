@@ -2,18 +2,13 @@ package org.com.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.mongodb.ConnectionString;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.com.dto.timestamp_dto.WorkoutTimestampDto;
 import org.com.dto.workout_dto.UpsertWorkoutInMongoDto;
-import org.com.dto.workout_dto.UpdateWorkoutDto;
 import org.com.model.Workout;
 
 import java.io.IOException;
@@ -76,6 +71,23 @@ public class WorkoutMongoClient extends BaseMongoClient {
                 dbWorkout.getExercices()
             );
         }
+    }
+
+    public List<WorkoutTimestampDto> getWorkoutsBy(String field, String value) throws IOException {
+        FindIterable<Document> documentsIterable = entityCollection.find(eq(field, value));
+        List<WorkoutTimestampDto> documents = new ArrayList<>();
+        for (Document document : documentsIterable) {
+            Workout dbWorkout = new ObjectMapper().readValue(document.toJson(), Workout.class);
+            documents.add(
+                new WorkoutTimestampDto(
+                    dbWorkout.get_id(),
+                    dbWorkout.getAuthor(),
+                    dbWorkout.getName(),
+                    dbWorkout.getExercices()
+                )
+            );
+        }
+        return documents;
     }
 
     public WorkoutTimestampDto updateWorkout(UpsertWorkoutInMongoDto workout, ObjectId authorId, ObjectId _id) throws IOException {

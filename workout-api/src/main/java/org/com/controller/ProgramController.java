@@ -32,6 +32,12 @@ public class ProgramController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    public List<ProgramTimestampDto> researchPrograms(@QueryParam("field") String field, @QueryParam("value") String value) throws IOException {
+        return programMongoClient.getProgramsBy(field, value);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
     public ProgramTimestampDto getProgramById(@PathParam("id") String id) throws IOException {
         return programMongoClient.getProgramById(new ObjectId(id));

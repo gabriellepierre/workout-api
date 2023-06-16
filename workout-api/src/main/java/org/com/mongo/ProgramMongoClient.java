@@ -69,6 +69,24 @@ public class ProgramMongoClient extends BaseMongoClient {
         }
     }
 
+    public List<ProgramTimestampDto> getProgramsBy(String field, String value) throws IOException {
+        FindIterable<Document> documentsIterable = entityCollection.find(eq(field, value));
+        List<ProgramTimestampDto> documents = new ArrayList<>();
+        for (Document document : documentsIterable) {
+            Program dbProgram = new ObjectMapper().readValue(document.toJson(), Program.class);
+            documents.add(
+                new ProgramTimestampDto(
+                    dbProgram.get_id(),
+                    dbProgram.getName(),
+                    dbProgram.getObjective(),
+                    dbProgram.getLevel(),
+                    dbProgram.getSeances()
+                )
+            );
+        }
+        return documents;
+    }
+
     public ProgramTimestampDto updateProgram(UpdateProgramInMongoDto program, List<ObjectId> seances, ObjectId _id) throws IOException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         entityCollection.findOneAndReplace(

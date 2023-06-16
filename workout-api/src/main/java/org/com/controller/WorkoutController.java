@@ -4,9 +4,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.bson.types.ObjectId;
+import org.com.dto.timestamp_dto.ProgramTimestampDto;
 import org.com.dto.timestamp_dto.WorkoutTimestampDto;
 import org.com.dto.workout_dto.*;
-import org.com.model.Workout;
 import org.com.mongo.WorkoutMongoClient;
 
 import java.io.IOException;
@@ -21,6 +21,12 @@ public class WorkoutController {
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkoutTimestampDto> getAllWorkouts() throws IOException {
         return workoutMongoClient.getAllWorkouts();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<WorkoutTimestampDto> researchWorkouts(@QueryParam("field") String field, @QueryParam("value") String value) throws IOException {
+        return workoutMongoClient.getWorkoutsBy(field, value);
     }
 
     @GET
