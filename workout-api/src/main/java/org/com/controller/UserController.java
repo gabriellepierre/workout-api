@@ -3,6 +3,7 @@ package org.com.controller;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.com.dto.timestamp_dto.UserTimestampDto;
 import org.com.dto.user_dto.*;
@@ -11,6 +12,7 @@ import org.com.model.User;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/users")
 public class UserController {
@@ -72,5 +74,14 @@ public class UserController {
                 new ObjectId(_id)
             );
         }
+    }
+
+    @DELETE
+    @Path("/{_id}")
+    public Response deleteUser(@PathParam("_id") String _id) {
+        return Optional.ofNullable(userMongoClient.deleteUser(new ObjectId(_id)))
+            .map(p -> Response.noContent())
+            .orElse(Response.status(Response.Status.NOT_FOUND))
+            .build();
     }
 }

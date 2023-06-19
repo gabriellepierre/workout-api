@@ -3,8 +3,10 @@ package org.com.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.com.dto.program_dto.AddProgramInMongoDto;
@@ -94,5 +96,9 @@ public class ProgramMongoClient extends BaseMongoClient {
             Document.parse(ow.writeValueAsString(program)).append("seances", seances)
         );
         return this.getProgramById(_id);
+    }
+
+    public DeleteResult deleteProgram(ObjectId id) {
+        return entityCollection.deleteOne(new Document("_id", id));
     }
 }

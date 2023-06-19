@@ -3,6 +3,7 @@ package org.com.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.Document;
@@ -83,5 +84,9 @@ public class UserMongoClient extends BaseMongoClient {
             );
         }
         return this.getUserById(_id);
+    }
+
+    public DeleteResult deleteUser(ObjectId id) {
+        return entityCollection.deleteOne(new Document("_id", id));
     }
 }

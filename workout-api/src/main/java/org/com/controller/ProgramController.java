@@ -3,6 +3,7 @@ package org.com.controller;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.com.dto.program_dto.AddProgramInMongoDto;
 import org.com.dto.program_dto.UpdateProgramInMongoDto;
@@ -17,7 +18,9 @@ import org.com.mongo.ProgramMongoClient;
 import org.com.mongo.UserMongoClient;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/programs")
 public class ProgramController {
@@ -73,5 +76,14 @@ public class ProgramController {
             ),
             program.getSeances().stream().map(ObjectId::new).toList(),
             new ObjectId(_id));
+    }
+
+    @DELETE
+    @Path("/{_id}")
+    public Response deleteProgram(@PathParam("_id") String _id) {
+        return Optional.ofNullable(programMongoClient.deleteProgram(new ObjectId(_id)))
+            .map(p -> Response.noContent())
+            .orElse(Response.status(Response.Status.NOT_FOUND))
+            .build();
     }
 }

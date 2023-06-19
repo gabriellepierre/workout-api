@@ -3,6 +3,7 @@ package org.com.controller;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.com.dto.timestamp_dto.ProgramTimestampDto;
 import org.com.dto.timestamp_dto.WorkoutTimestampDto;
@@ -11,6 +12,7 @@ import org.com.mongo.WorkoutMongoClient;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/workouts")
 public class WorkoutController {
@@ -112,5 +114,14 @@ public class WorkoutController {
                 new ObjectId(_id)
             );
         }
+    }
+
+    @DELETE
+    @Path("/{_id}")
+    public Response deleteWorkout(@PathParam("_id") String _id) {
+        return Optional.ofNullable(workoutMongoClient.deleteWorkout(new ObjectId(_id)))
+            .map(p -> Response.noContent())
+            .orElse(Response.status(Response.Status.NOT_FOUND))
+            .build();
     }
 }
