@@ -3,11 +3,14 @@ package org.com.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.com.dto.program_dto.AddProgramInMongoDto;
 import org.com.dto.program_dto.UpdateProgramInMongoDto;
@@ -16,9 +19,15 @@ import org.com.model.Program;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static com.mongodb.client.model.Accumulators.addToSet;
+import static com.mongodb.client.model.Accumulators.sum;
+import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.*;
 
 @ApplicationScoped
 public class ProgramMongoClient extends BaseMongoClient {
@@ -81,6 +90,31 @@ public class ProgramMongoClient extends BaseMongoClient {
         FindIterable<Document> documentsIterable = entityCollection.find(eq(field, value));
         List<ProgramTimestampDto> documents = new ArrayList<>();
         for (Document document : documentsIterable) {
+            Program dbProgram = new ObjectMapper().readValue(document.toJson(), Program.class);
+            documents.add(
+                new ProgramTimestampDto(
+                    dbProgram.get_id(),
+                    dbProgram.getName(),
+                    dbProgram.getObjective(),
+                    dbProgram.getLevel(),
+                    dbProgram.getSeances()
+                )
+            );
+        }
+        return documents;
+    }
+
+    public List<ProgramTimestampDto> getProgramsUsingAggregate(String field, String value) throws IOException {
+        List<BsonDocument> pipeline = Stream.of(
+            group("$"+field, sum(field, "$champ_a_agreger")),
+            project(fields(
+                excludeId(),
+                include(field)
+            ))
+        ).map(Bson::toBsonDocument).toList();
+
+        List<ProgramTimestampDto> documents = new ArrayList<>();
+        for (BsonDocument document : pipeline) {
             Program dbProgram = new ObjectMapper().readValue(document.toJson(), Program.class);
             documents.add(
                 new ProgramTimestampDto(
