@@ -1,0 +1,42 @@
+SeanceType : 
+{
+    _id: ObjectId(),
+    author: ObjectId(), // One to one : Id de l'utilisateur qui a créé son template de séance
+    name: String,
+    exercises: [
+        {
+            _id: ObjectId(),
+            name: String,
+            musclesEngaged: String[],
+            sets: [
+                {
+                    setNumber: int,
+                    reps: int,
+                    weight: int,
+                }
+            ]
+        },
+    ], // Incorporation
+}
+
+
+
+ProgrammeType :
+{
+    _id: ObjectId(),
+    name: String,
+    objective: String, // Indexation
+    level: String,
+    seances : ObjectId()[], // Référencement + One-to-Few
+}
+
+
+
+UserType : 
+{
+    _id: ObjectId(),
+    pseudo: String,
+    email: String,
+    password: String,
+    program: ObjectId(), // Référencement INVERSE + One-to-Zillions
+}

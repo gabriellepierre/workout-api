@@ -1,0 +1,155 @@
+Ce fichier contient des exemples de différentes requêtes HTTP ainsi que leurs paramètres possibles à envoyer à l'API.
+
+
+
+// Research program
+curl --request GET \
+  --url 'http://localhost:8080/programs/research?field=objective&value=bestObjective'
+
+
+
+
+// USER
+
+
+// get all users 
+curl --request GET \
+  --url http://localhost:8080/users
+
+// get user by id
+curl --request GET \
+  --url http://localhost:8080/users/64779939a753eb2cbf0abb4f
+
+// add user
+curl --request POST \
+  --url http://localhost:8080/users \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"pseudo": "xXDarkSwagmenDu19Xx",
+	"password": "mdpTresSecurise",
+	"email": "mael.chaumont@etu.uca.fr"
+}'
+
+// edit user
+curl --request PUT \
+  --url http://localhost:8080/users/64779939a753eb2cbf0abb4f \
+  --header 'Content-Type: application/json' \
+  --data '{
+		"email": "mael.chaumont@etu",
+		"password": "mdpTresSecuris",
+		"program": "64779939a753eb2cbf0abb4f",
+		"pseudo": "xXDarkSwagmenDu19Xx"
+}'
+
+// delete user
+curl --request DELETE \
+  --url http://localhost:8080/users/649041754838350a9dc17049
+
+
+
+
+
+// WORKOUT
+
+// get all workouts
+curl --request GET \
+  --url http://localhost:8080/workouts
+
+// get workout by id
+curl --request GET \
+  --url http://localhost:8080/workouts/64779939a753eb2cbf0abb4f
+
+// add workout
+curl --request POST \
+  --url http://localhost:8080/workouts \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"author": "647e6084a93bb243bf7a9506",
+	"name": "WorkoutDeFouMonGate",
+	"exercices": []
+}'
+
+// edit workout
+curl --request PUT \
+  --url http://localhost:8080/workouts/647e5ebba93bb243bf7a9500 \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"author": "64779939a753eb2cbf0abb4f",
+	"name": "BigWorkout",
+	"exercices": [
+		{
+			"name": "pompes",
+			"musclesEngaged": [
+				"triceps",
+				"deltoides",
+				"pectoraux"
+			],
+			"sets": [
+				{
+					"setNumber": 1,
+					"weight": 12,
+					"reps": 20
+				}
+			]
+		},
+		{
+			"name": "leg press",
+			"musclesEngaged": [
+				"cuisses",
+				"fessiers"
+			],
+			"sets": [
+				{
+					"setNumber": 2,
+					"weight": 120,
+					"reps": 10
+				}
+			]
+		}
+	]
+}'
+
+
+//delete workout
+curl --request DELETE \
+  --url http://localhost:8080/workouts/649041754838350a9dc17049
+
+
+
+
+// PROGRAM
+
+// Research program
+curl --request GET \
+  --url 'http://localhost:8080/programs/research?field=objective&value=bestObjective'
+
+// get all programs
+curl --request GET \
+  --url http://localhost:8080/programs
+
+// get one program by id
+curl --request GET \
+  --url http://localhost:8080/programs/64779939a753eb2cbf0abb4f
+
+// add program
+curl --request POST \
+  --url http://localhost:8080/programs \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"name": "programName",
+	"objective": "bestObjective",
+	"level": "someLevel",
+	"seances": [
+		"647e5e3bc990f15a0151ae94",
+		"647e5ebba93bb243bf7a9500"
+	]
+}'
+
+// edit program
+
+// delete program
+curl --request DELETE \
+  --url http://localhost:8080/programs/649041754838350a9dc17049
+
