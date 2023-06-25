@@ -3,10 +3,10 @@ package org.com.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.com.dto.program_dto.AddProgramInMongoDto;
@@ -25,6 +25,12 @@ public class ProgramMongoClient extends BaseMongoClient {
     public ProgramMongoClient() {
         super();
         this.entityCollection = this.mongoClient.getDatabase("workout").getCollection("program");
+        // Single-field index sur objective
+        entityCollection.createIndex(Indexes.ascending("objective"));
+        // Single-field index sur level
+        entityCollection.createIndex(Indexes.ascending("level"));
+        // Compound index sur objective ET level
+        entityCollection.createIndex(Indexes.ascending("objective", "level"));
     }
 
     public InsertOneResult saveProgram(AddProgramInMongoDto p) {

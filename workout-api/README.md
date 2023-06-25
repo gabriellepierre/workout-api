@@ -1,60 +1,85 @@
-# workout-api
+# Workout-api
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Ce projet utilise le framework Quarkus. Leur site : https://quarkus.io/ .
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+> **_NOTE:_**  Une liste des requêtes HTTP possibles à envoyer à l'API est présente dans le fichier requetesHttp.txt .
 
-## Running the application in dev mode
+## Description
 
-You can run your application in dev mode that enables live coding using:
+L'objectif de ce projet est de créer une API Java avec le framework Quarkus pour une application de sport.
+La base de données utilisée est non-relationnelle (MongoDB), et la librairie utilisée est org.mongodb:mongodb-driver-sync:4.9.1 .
+
+## Lancer l'application en mode dev
+
+1 - Tout d'abord, lancez les conteneurs Docker avec la commande
+```shell script
+docker-compose up -d
+```
+
+Ceci va lancer la BDD MongoDB et son interface MongoExpress, accessible sur http://localhost:8888/ .
+
+2 - Ensuite pour lancer l'application (avec live-reload) avec Maven, entrez depuis un terminal :
 ```shell script
 ./mvnw compile quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-## Packaging and running the application
-
-The application can be packaged using:
+PS : il est aussi possible d'utiliser la CLI Quarkus. Pour cela, utilisez un gestionnaire de packages comme SDKMan (https://sdkman.io/) ou Chocolatey pour installer la CLI Quarkus. Puis entrez :
 ```shell script
-./mvnw package
-```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+quakus dev
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+## Lancer les tests unitaires
 
-## Creating a native executable
-
-You can create a native executable using: 
 ```shell script
-./mvnw package -Pnative
+./mvnw compile quarkus:test
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
+ou
+
 ```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+quarkus test
 ```
 
-You can then execute your native executable with: `./target/workout-api-1.0.0-SNAPSHOT-runner`
+> **_NB:_**  Une IU dev de quarkus est disponible sur http://localhost:8080/q/dev/. Cette UI possède la liste des endpoints HTTP, leurs scores (performances), etc...
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+## Fonctionnalités réalisées dans la Notation (https://clientserveur-courses.clubinfo-clermont.fr/Notation.html)
 
-## Related Guides
+### Documentation
 
-- RESTEasy Reactive ([guide](https://quarkus.io/guides/resteasy-reactive)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
+1 - Schéma complet de la base de données (MCD) : voir le fichier AppliDeSportMCD.svg
 
-## Provided Code
+2 - un README : ce fichier
 
-### RESTEasy Reactive
+3 - UML des entités façon NoSQL : voir le fichier 
 
-Easily start your Reactive RESTful Web Services
+### Projet
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+4 - Suivi de la structure demandée : oui, Utilisation d'un Modèl (package model), de Controlleurs (package Controllers) et de DTO servant au transfert de données dans le body, soit à la réception de la requête, 
+l'envoi de la réponse HTTP ou l'envoi de données à MongoDB.
+
+5 - Document imbriqués/dénormalisés : oui, liste de documents Exercice dans Workout et liste de documents Set dans Exercice.
+
+6 - Documents liés par référence : oui, référence à un Program dans User
+
+7 - CRUD complet : oui, pour chaque document principal possibel d'en ajouter 1, d'en éditer 1, d'en supprimer 1, de tous les récupérer ou d'en récupérer 1 par _id.
+
+8 - Requêtes de recherche : oui, possibilité de rechercher un Program par un champ, n'importe lequel
+
+9 - Définition d'index cohérents : oui, voir le constructeur de ProgramMongoClient, on utilise des Single-field Index et des Compound index dans la cas d'un filtre sur un programme,
+soit par objectif, soit par level, soit par les 2.
+
+### Bonus
+
+10 - Aggrégation avancée
+
+11 - Tests : oui, dans le répertoire test. Lancez les tests avec 
+
+```shell script
+./mvnw compile quarkus:test
+```
+
+ou
+
+```shell script
+quarkus test
+```
